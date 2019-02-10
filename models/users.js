@@ -1,0 +1,1 @@
+export default [{ id: 'someId1', name: "user1" }, { id: 'someId2', name: "user2" }];
