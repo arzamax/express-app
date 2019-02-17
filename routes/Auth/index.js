@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { config } from '../../config';
 import users from '../../models/users';
+import passport from '../../middlewares/passport';
 
 const router = express.Router();
 
@@ -31,6 +32,10 @@ router.post('/', (req, res) => {
     res.status(404);
     res.json({ code: 404, message: "Not Found" });
   }
+});
+
+router.post('/passport', passport.authenticate('local', { session: false }), (req, res) => {
+  res.json(req.user);
 });
 
 export default router;
