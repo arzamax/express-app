@@ -4,10 +4,10 @@ import bodyParser from 'body-parser';
 import cookieParser from './middlewares/cookieParser';
 import queryParser from './middlewares/queryParser';
 import passport from './middlewares/passport';
-import routes from './routes';
+import routes from './routes/index';
 
 const app = express();
-const port = process.env.PORT || 3004;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(cookieParser());

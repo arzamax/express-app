@@ -2,9 +2,9 @@ import express from 'express';
 
 import validateToken from '../middlewares/validateToken';
 import passport from '../middlewares/passport';
-import AuthRoutes from './Auth';
-import ProductsRoutes from './Products';
-import UsersRoutes from './Users';
+import AuthRoutes from './Auth/index';
+import ProductsRoutes from './Products/index';
+import UsersRoutes from './Users/index';
 
 const router = express.Router();
 

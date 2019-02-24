@@ -4,7 +4,7 @@ import BearerStrategy from 'passport-http-bearer';
 import jwt from 'jsonwebtoken';
 
 import users from '../models/users';
-import { config } from '../config';
+import { config } from '../config/index';
 
 passport.use(new LocalStrategy(
   { session: false },

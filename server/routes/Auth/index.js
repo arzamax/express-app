@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import { config } from '../../config';
+import { config } from '../../config/index';
 import users from '../../models/users';
 import passport from '../../middlewares/passport';
 
