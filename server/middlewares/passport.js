@@ -1,35 +1,51 @@
 import passport from 'passport';
+import Sequelize from 'sequelize';
 import LocalStrategy from 'passport-local';
 import BearerStrategy from 'passport-http-bearer';
 import jwt from 'jsonwebtoken';
 
-import users from '../models/users';
 import { config } from '../config/index';
+import db from '../models';
+
+const Op = Sequelize.Op;
 
 passport.use(new LocalStrategy(
   { session: false },
-  (username, password, next) => {
-    const user = users.find(user => user.username === username);
-
-    if (user && (password === user.password)) {
-      const { id, email } = user;
-      const token = jwt.sign({ id }, config.secret, { expiresIn: 60 });
-      const payload = {
-        code: 200,
-        message: 'OK',
-        data: {
-          user: {
-            email,
-            username,
+  async (username, password, next) => {
+    try {
+      const user = await db.User.findAll({
+        where: {
+          username: {
+            [Op.eq]: username,
           },
-        },
-        token,
-      };
+          password: {
+            [Op.eq]: password,
+          }
+        }
+      });
 
-      next(null, payload);
+      if (user) {
+        const { id, email } = user;
+        const token = jwt.sign({id}, config.secret, {expiresIn: 60});
+        const payload = {
+          code: 200,
+          message: 'OK',
+          data: {
+            user: {
+              email,
+              username,
+            },
+          },
+          token,
+        };
 
-    } else {
-      next({ message: 'Not Found' });
+        next(null, payload);
+
+      } else {
+        next({ message: "Not Found" });
+      }
+    } catch (e) {
+      next(e);
     }
   }
 ));

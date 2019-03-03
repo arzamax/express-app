@@ -1,36 +1,52 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import Sequelize from 'sequelize';
 
 import { config } from '../../config/index';
-import users from '../../models/users';
+import db from '../../models';
 import passport from '../../middlewares/passport';
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(user => user.username === username);
+const Op = Sequelize.Op;
 
-  if (user && (password === user.password)) {
-    const { id, email } = user;
-    const token = jwt.sign({ id }, config.secret, { expiresIn: 60 });
-    const payload = {
-      code: 200,
-      message: 'OK',
-      data: {
-        user: {
-          email,
-          username,
+router.post('/', async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const user = await db.User.findAll({
+      where: {
+        username: {
+          [Op.eq]: username,
         },
-      },
-      token,
-    };
+        password: {
+          [Op.eq]: password,
+        }
+      }
+    });
 
-    res.json(payload);
+    if (user) {
+      const { id, email } = user;
+      const token = jwt.sign({ id }, config.secret, { expiresIn: 60 });
+      const payload = {
+        code: 200,
+        message: 'OK',
+        data: {
+          user: {
+            email,
+            username,
+          },
+        },
+        token,
+      };
 
-  } else {
-    res.status(404);
-    res.json({ code: 404, message: "Not Found" });
+      res.json(payload);
+
+    } else {
+      res.status(404);
+      res.json({ code: 404, message: "Not Found" });
+    }
+  } catch(e) {
+    next(e);
   }
 });
 

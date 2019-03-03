@@ -1,1 +1,0 @@
-export default [{ id: 'someId1', label: "product1", reviews: ["good"] }, { id: 'someId2', label: "product2" }];

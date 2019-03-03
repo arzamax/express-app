@@ -1,19 +1,29 @@
 import express from 'express';
 
-import ProductRoutes from './Product/index';
-import products from '../../models/products';
+import db from '../../models';
+import ProductRoutes from './Product';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json(products)
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await db.Product.findAll();
+
+    res.json(products);
+  } catch(e) {
+    next(e);
+  }
 });
 
-router.post('/', (req, res) => {
-  const { id, label, reviews } = req.body;
+router.post('/', async (req, res, next) => {
+  try {
+    const { label } = req.body;
+    const product = await db.Product.create({ label });
 
-  products.push({ id, label, reviews });
-  res.end('added');
+    res.json(product.dataValues);
+  } catch(e) {
+    next(e);
+  }
 });
 
 router.use('/:id', ProductRoutes);
